@@ -1,1 +1,1 @@
-# DAVSS
+# Video Semantic Segmentation with Distortion-Aware Feature Correction
