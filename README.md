@@ -1,9 +1,8 @@
 # Video Semantic Segmentation with Distortion-Aware Feature Correction
 [Paper](https://arxiv.org/abs/2006.10380) | [Project Page](https://jfzhuang.github.io/DAVSS.github.io/) | [YouTube]() | [BibeTex](#citation)
 
-<img src="https://github.com/jfzhuang/DAVSS/blob/master/gif/seq1.gif" width="860"/>
+<img src="./gif/seq1.gif" width="860"/>
 
-## Introduction
 
 ## Citation
 ```
