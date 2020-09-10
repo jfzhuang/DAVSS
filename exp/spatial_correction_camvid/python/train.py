@@ -115,7 +115,7 @@ def train():
     else:
         net.load_state_dict(new_weight, strict=False)
 
-        weight_file = '/gdata1/zhuangjf/git_repo/DAVSS/saved_model1/dmnet_camvid/best.pth'
+        weight_file = '/gdata1/zhuangjf/git_repo/DAVSS/saved_model1/dmnet_camvid/now.pth'
         weight = torch.load(weight_file, map_location=map_location)
         net.dmnet.load_state_dict(weight, True)
 
