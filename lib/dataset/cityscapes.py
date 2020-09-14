@@ -12,10 +12,9 @@ from lib.dataset.utils import transform_im, randomcrop
 
 
 class cityscapes_video_dataset(Dataset):
-    def __init__(self, data_path, gt_path, mask_path, list_path, crop_size=(512, 1024)):
+    def __init__(self, data_path, gt_path, list_path, crop_size=(512, 1024)):
         self.data_path = data_path
         self.gt_path = gt_path
-        self.mask_path = mask_path
         self.get_list(list_path)
         self.crop_size = crop_size
 
@@ -30,26 +29,17 @@ class cityscapes_video_dataset(Dataset):
         img_3 = cv2.imread(os.path.join(self.data_path, self.img_3_name[idx]))
         img_3 = transform_im(img_3)
 
-        img_1_mask = cv2.imread(os.path.join(self.mask_path, self.img_1_name[idx]), 0)
-        img_2_mask = cv2.imread(os.path.join(self.mask_path, self.img_2_name[idx]), 0)
-        img_3_mask = cv2.imread(os.path.join(self.mask_path, self.img_3_name[idx]), 0)
-
         gt_label = cv2.imread(os.path.join(self.gt_path, self.gt_label_name[idx]), 0)
 
         if self.crop_size is not None:
-            [img_1, img_1_mask, img_2, img_2_mask, img_3, img_3_mask,
-             gt_label] = randomcrop([img_1, img_1_mask, img_2, img_2_mask, img_3, img_3_mask, gt_label],
-                                    crop_size=self.crop_size)
+            [img_1, img_2, img_3, gt_label] = randomcrop([img_1, img_2, img_3, gt_label], crop_size=self.crop_size)
 
         img_1 = torch.from_numpy(img_1)
         img_2 = torch.from_numpy(img_2)
         img_3 = torch.from_numpy(img_3)
-        img_1_mask = torch.from_numpy(img_1_mask.astype(np.int64))
-        img_2_mask = torch.from_numpy(img_2_mask.astype(np.int64))
-        img_3_mask = torch.from_numpy(img_3_mask.astype(np.int64))
         gt_label = torch.from_numpy(gt_label.astype(np.int64))
 
-        return [img_1, img_2, img_3], [img_1_mask, img_2_mask, img_3_mask], gt_label
+        return [img_1, img_2, img_3], gt_label
 
     def get_list(self, list_path):
         self.img_1_name = []

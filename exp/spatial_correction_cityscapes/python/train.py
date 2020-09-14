@@ -26,7 +26,6 @@ def get_arguments():
     parser.add_argument("--exp_name", type=str, help="exp name")
     parser.add_argument("--root_data_path", type=str, help="root path to the dataset")
     parser.add_argument("--root_gt_path", type=str, help="root path to the ground truth")
-    parser.add_argument("--root_mask_path", type=str, help="root path to the deeplab mask")
     parser.add_argument("--train_list_path", type=str, help="path to the list of train subset")
     parser.add_argument("--test_list_path", type=str, help="path to the list of test subset")
 
@@ -36,6 +35,7 @@ def get_arguments():
     parser.add_argument("--resume_epoch", type=int, help="from which epoch for resume")
     parser.add_argument("--resume_load_path", type=str, help="resume model load path")
     parser.add_argument("--train_load_path", type=str, help="train model load path")
+    parser.add_argument("--dmnet_load_path", type=str, help="trained dmnet model load path")
     parser.add_argument("--lr", type=float, help="learning rate")
     parser.add_argument("--local_rank", type=int, help="index the replica")
     parser.add_argument("--cfnet_lr", type=float, help="learning rate")
@@ -114,9 +114,7 @@ def train():
         net.load_state_dict(new_weight, strict=True)
     else:
         net.load_state_dict(new_weight, strict=False)
-
-        weight_file = '/gdata1/zhuangjf/git_repo/DAVSS/saved_model1/dmnet_cityscapes/best.pth'
-        weight = torch.load(weight_file, map_location=map_location)
+        weight = torch.load(args.dmnet_load_path, map_location=map_location)
         net.dmnet.load_state_dict(weight, True)
 
     if local_rank == 0:
@@ -128,8 +126,7 @@ def train():
                                               output_device=local_rank,
                                               find_unused_parameters=True)
 
-    train_data = cityscapes_video_dataset(args.root_data_path, args.root_gt_path, args.root_mask_path,
-                                          args.train_list_path)
+    train_data = cityscapes_video_dataset(args.root_data_path, args.root_gt_path, args.train_list_path)
     train_data_loader = torch.utils.data.DataLoader(train_data,
                                                     batch_size=args.train_batch_size,
                                                     shuffle=False,
@@ -171,14 +168,14 @@ def train():
         net.module.dmnet.eval()
         train_data_loader.sampler.set_epoch(epoch)
         for i, data_batch in enumerate(train_data_loader):
-            img_list, img_mask_list, gt_label = data_batch
+            img_list, gt_label = data_batch
 
             adjust_lr(args, cfnet_optimizer, itr, max_itr, args.cfnet_lr)
             adjust_lr(args, flow_optimizer, itr, max_itr, args.lr)
 
             flow_optimizer.zero_grad()
             cfnet_optimizer.zero_grad()
-            loss_semantic, loss_cfnet = net(img_list, img_mask_list, label=gt_label)
+            loss_semantic, loss_cfnet = net(img_list, label=gt_label)
             loss_semantic = torch.mean(loss_semantic)
             loss_cfnet = torch.mean(loss_cfnet)
             loss = loss_semantic + loss_cfnet

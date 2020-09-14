@@ -29,19 +29,16 @@ class SCNet(nn.Module):
         self.set_fix_deeplab()
         self.set_fix_dmnet()
 
-    def forward(self, img_list, img_mask_list=None, label=None):
+    def forward(self, img_list, label=None):
 
         n, c, h, w = img_list[0].shape
 
         img_1_feat = self.deeplab(img_list[0])
         warp_img = F.upsample(img_list[0], scale_factor=0.25, mode='bilinear', align_corners=True)
 
-        if img_mask_list is None:
-            img_2_mask = self.deeplab(img_list[1])
-            img_2_mask = F.upsample(img_2_mask, scale_factor=4, mode='bilinear', align_corners=True)
-            img_2_mask = torch.argmax(img_2_mask, dim=1)
-        else:
-            img_2_mask = img_mask_list[1]
+        img_2_mask = self.deeplab(img_list[1])
+        img_2_mask = F.upsample(img_2_mask, scale_factor=4, mode='bilinear', align_corners=True)
+        img_2_mask = torch.argmax(img_2_mask, dim=1)
 
         loss_semantic = 0.0
         loss_cfnet = 0.0
@@ -120,23 +117,19 @@ class SCNet_dmnet(nn.Module):
         self.set_fix_deeplab()
         self.set_fix_flownet()
 
-    def forward(self, img_list, img_mask_list=None):
+    def forward(self, img_list):
 
         n, c, h, w = img_list[0].shape
 
         img_1_feat = self.deeplab(img_list[0])
         warp_im = F.upsample(img_list[0], scale_factor=0.25, mode='bilinear', align_corners=True)
 
-        if img_mask_list is None:
-            img_2_mask = self.deeplab(img_list[1])
-            img_2_mask = F.upsample(img_2_mask, scale_factor=4, mode='bilinear', align_corners=True)
-            img_2_mask = torch.argmax(img_2_mask, dim=1)
-            img_3_mask = self.deeplab(img_list[2])
-            img_3_mask = F.upsample(img_3_mask, scale_factor=4, mode='bilinear', align_corners=True)
-            img_3_mask = torch.argmax(img_3_mask, dim=1)
-        else:
-            img_2_mask = img_mask_list[1]
-            img_3_mask = img_mask_list[2]
+        img_2_mask = self.deeplab(img_list[1])
+        img_2_mask = F.upsample(img_2_mask, scale_factor=4, mode='bilinear', align_corners=True)
+        img_2_mask = torch.argmax(img_2_mask, dim=1)
+        img_3_mask = self.deeplab(img_list[2])
+        img_3_mask = F.upsample(img_3_mask, scale_factor=4, mode='bilinear', align_corners=True)
+        img_3_mask = torch.argmax(img_3_mask, dim=1)
 
         loss_dmnet = 0.0
 

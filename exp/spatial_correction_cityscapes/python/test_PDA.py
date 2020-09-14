@@ -60,7 +60,7 @@ def test():
 
                 img = img_list[9 - d].cuda()
                 feat = deeplab(img)
-                warp_im = F.upsample(img, scale_factor=0.25, mode='bilinear', align_corners=True)
+                warp_im = F.upsample(img, scale_factor=0.25, mode='bilinear')
 
                 for i in range(d):
                     img_1 = img_list[9 - d + i].cuda()
@@ -69,14 +69,14 @@ def test():
                     feat = warpnet(feat, flow)
                     warp_im = warpnet(warp_im, flow)
 
-                feat = F.interpolate(feat, scale_factor=4, mode='bilinear', align_corners=True)
+                feat = F.interpolate(feat, scale_factor=4, mode='bilinear')
 
-                img_2_down = F.upsample(img_2, scale_factor=0.25, mode='bilinear', align_corners=True)
+                img_2_down = F.upsample(img_2, scale_factor=0.25, mode='bilinear')
                 dm = dmnet(warp_im, img_2_down)
-                dm = F.interpolate(dm, scale_factor=4, mode='bilinear', align_corners=True)
+                dm = F.interpolate(dm, scale_factor=4, mode='bilinear')
 
                 feat_cc = cfnet(img_2)
-                feat_cc = F.interpolate(feat_cc, scale_factor=4, mode='bilinear', align_corners=True)
+                feat_cc = F.interpolate(feat_cc, scale_factor=4, mode='bilinear')
 
                 feat_merge = feat * (1-dm) + feat_cc*dm
                 out = torch.argmax(feat_merge, dim=1)

@@ -26,7 +26,6 @@ def get_arguments():
     parser.add_argument("--exp_name", type=str, help="exp name")
     parser.add_argument("--root_data_path", type=str, help="root path to the dataset")
     parser.add_argument("--root_gt_path", type=str, help="root path to the ground truth")
-    parser.add_argument("--root_mask_path", type=str, help="root path to the deeplab mask")
     parser.add_argument("--train_list_path", type=str, help="path to the list of train subset")
     parser.add_argument("--test_list_path", type=str, help="path to the list of test subset")
 
@@ -123,8 +122,7 @@ def train():
                                               output_device=local_rank,
                                               find_unused_parameters=True)
 
-    train_data = cityscapes_video_dataset(args.root_data_path, args.root_gt_path, args.root_mask_path,
-                                          args.train_list_path)
+    train_data = cityscapes_video_dataset(args.root_data_path, args.root_gt_path, args.train_list_path)
     train_data_loader = torch.utils.data.DataLoader(train_data,
                                                     batch_size=args.train_batch_size,
                                                     shuffle=False,
@@ -158,12 +156,12 @@ def train():
         net.module.dmnet.train()
         train_data_loader.sampler.set_epoch(epoch)
         for i, data_batch in enumerate(train_data_loader):
-            img_list, img_mask_list, gt_label = data_batch
+            img_list, gt_label = data_batch
 
             adjust_lr(args, dmnet_optimizer, itr, max_itr, args.dmnet_lr)
 
             dmnet_optimizer.zero_grad()
-            loss_dmnet = net(img_list, img_mask_list)
+            loss_dmnet = net(img_list)
             loss_dmnet = torch.mean(loss_dmnet)
             loss_dmnet.backward()
             dmnet_optimizer.step()
@@ -241,13 +239,6 @@ def train():
                 save_name = 'now.pth'
                 save_path = os.path.join(args.model_save_path, save_name)
                 torch.save(net.module.dmnet.state_dict(), save_path)
-
-                mean_loss = np.mean(eval_loss)
-                if mean_loss < current_eval_loss:
-                    save_name = 'best.pth'
-                    save_path = os.path.join(args.model_save_path, save_name)
-                    torch.save(net.module.dmnet.state_dict(), save_path)
-                    current_eval_loss = mean_loss
 
             dist.barrier()
 

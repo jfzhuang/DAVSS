@@ -241,13 +241,6 @@ def train():
                 save_path = os.path.join(args.model_save_path, save_name)
                 torch.save(net.module.dmnet.state_dict(), save_path)
 
-                mean_loss = np.mean(eval_loss)
-                if mean_loss < current_eval_loss:
-                    save_name = 'best.pth'
-                    save_path = os.path.join(args.model_save_path, save_name)
-                    torch.save(net.module.dmnet.state_dict(), save_path)
-                    current_eval_loss = mean_loss
-
             dist.barrier()
 
     if local_rank == 0:

@@ -26,7 +26,6 @@ def get_arguments():
     parser.add_argument("--exp_name", type=str, help="exp name")
     parser.add_argument("--root_data_path", type=str, help="root path to the dataset")
     parser.add_argument("--root_gt_path", type=str, help="root path to the ground truth")
-    parser.add_argument("--root_mask_path", type=str, help="root path to the deeplab mask")
     parser.add_argument("--train_list_path", type=str, help="path to the list of train subset")
     parser.add_argument("--test_list_path", type=str, help="path to the list of test subset")
 
@@ -36,6 +35,7 @@ def get_arguments():
     parser.add_argument("--resume_epoch", type=int, help="from which epoch for resume")
     parser.add_argument("--resume_load_path", type=str, help="resume model load path")
     parser.add_argument("--train_load_path", type=str, help="train model load path")
+    parser.add_argument("--dmnet_load_path", type=str, help="trained dmnet model load path")
     parser.add_argument("--lr", type=float, help="learning rate")
     parser.add_argument("--local_rank", type=int, help="index the replica")
     parser.add_argument("--cfnet_lr", type=float, help="learning rate")
@@ -114,9 +114,7 @@ def train():
         net.load_state_dict(new_weight, strict=True)
     else:
         net.load_state_dict(new_weight, strict=False)
-
-        weight_file = '/gdata1/zhuangjf/git_repo/DAVSS/saved_model1/dmnet_camvid/now.pth'
-        weight = torch.load(weight_file, map_location=map_location)
+        weight = torch.load(args.dmnet_load_path, map_location=map_location)
         net.dmnet.load_state_dict(weight, True)
 
     if local_rank == 0:
