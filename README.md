@@ -1,5 +1,5 @@
 # Video Semantic Segmentation with Distortion-Aware Feature Correction
-This repository is the official implementation of "Video Semantic Segmentation with Distortion-Aware Feature Correction" (accepted by IEEE Transactions on Circuits and Systems for Video Technology(TCSVT) 2020). It is designed for efficient video semantic segmentation task. 
+This repository is the official implementation of "Video Semantic Segmentation with Distortion-Aware Feature Correction" (accepted by IEEE Transactions on Circuits and Systems for Video Technology(TCSVT) 2020). It is designed for efficient video semantic segmentation task.
 
 [Paper](https://arxiv.org/abs/2006.10380) | [Project Page](https://jfzhuang.github.io/DAVSS.github.io/) | [YouTube]() | [BibeTex](#citation)
 
