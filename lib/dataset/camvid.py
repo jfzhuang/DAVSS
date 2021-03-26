@@ -32,9 +32,9 @@ class camvid_video_dataset(Dataset):
         gt_label = cv2.imread(os.path.join(self.gt_path, self.gt_label_name[idx]), 0)
 
         if np.random.rand() < 0.5:
-            img_1 = np.flip(img_1, axis=1)
-            img_2 = np.flip(img_2, axis=1)
-            img_3 = np.flip(img_3, axis=1)
+            img_1 = np.flip(img_1, axis=2)
+            img_2 = np.flip(img_2, axis=2)
+            img_3 = np.flip(img_3, axis=2)
             gt_label = np.flip(gt_label, axis=1)
 
         if self.crop_size is not None:
