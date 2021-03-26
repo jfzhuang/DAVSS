@@ -91,7 +91,8 @@ We provide trained model on Cityscapes and CamVid datasets. Please download mode
 @article{zhuang2020video,
   title={Video Semantic Segmentation with Distortion-Aware Feature Correction},
   author={Zhuang, Jiafan and Wang, Zilei and Wang, Bingke},
-  journal={arXiv preprint arXiv:2006.10380},
-  year={2020}
+  journal={IEEE Transactions on Circuits and Systems for Video Technology},
+  year={2020},
+  doi={10.1109/TCSVT.2020.3037234}}
 }
 ```
