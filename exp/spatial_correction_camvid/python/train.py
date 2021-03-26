@@ -126,7 +126,10 @@ def train():
                                               output_device=local_rank,
                                               find_unused_parameters=True)
 
-    train_data = camvid_video_dataset(args.root_data_path, args.root_gt_path, args.train_list_path, crop_size=None)
+    train_data = camvid_video_dataset(args.root_data_path,
+                                      args.root_gt_path,
+                                      args.train_list_path,
+                                      crop_size=(480, 720))
     train_data_loader = torch.utils.data.DataLoader(train_data,
                                                     batch_size=args.train_batch_size,
                                                     shuffle=False,

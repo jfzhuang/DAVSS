@@ -31,12 +31,18 @@ class camvid_video_dataset(Dataset):
 
         gt_label = cv2.imread(os.path.join(self.gt_path, self.gt_label_name[idx]), 0)
 
+        if np.random.rand() < 0.5:
+            img_1 = np.flip(img_1, axis=1)
+            img_2 = np.flip(img_2, axis=1)
+            img_3 = np.flip(img_3, axis=1)
+            gt_label = np.flip(gt_label, axis=1)
+
         if self.crop_size is not None:
             [img_1, img_2, img_3, gt_label] = randomcrop([img_1, img_2, img_3, gt_label], crop_size=self.crop_size)
 
-        img_1 = torch.from_numpy(img_1)
-        img_2 = torch.from_numpy(img_2)
-        img_3 = torch.from_numpy(img_3)
+        img_1 = torch.from_numpy(img_1.copy())
+        img_2 = torch.from_numpy(img_2.copy())
+        img_3 = torch.from_numpy(img_3.copy())
         gt_label = torch.from_numpy(gt_label.astype(np.int64))
 
         return [img_1, img_2, img_3], gt_label
